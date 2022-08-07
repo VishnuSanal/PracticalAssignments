@@ -1,0 +1,93 @@
+public class QuickSort {
+
+    public static int[] quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+
+            int p = partition(arr, low, high);
+
+            quickSort(arr, low, p - 1);
+
+            quickSort(arr, p + 1, high);
+
+        }
+
+        return arr;
+    }
+
+    private static int partition(int[] arr, int low, int high) {
+
+        int pivot = arr[high];
+
+        int i = low - 1;
+
+        for (int j = low; j < high; j++)
+            if (arr[j] < pivot)
+                swap(arr, ++i, j);
+
+        swap(arr, i + 1, high);
+
+        return i + 1;
+    }
+
+    private static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+}
+
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Test {
+
+    public static void main(String[] args) {
+
+//        int[] arr = {10, 7, 8, 9, 1, 5};
+//        int n = arr.length;
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of elements in array: ");
+        int n = scanner.nextInt();
+
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter the " + (i + 1) + "th element: ");
+            arr[i] = scanner.nextInt();
+        }
+
+        System.out.println(
+                "Initial array: " +
+                        Arrays.toString(arr)
+        );
+
+        System.out.println(
+                "Sorted array: " +
+                        Arrays.toString(
+                                QuickSort.quickSort(arr, 0, n - 1)
+                        )
+        );
+
+    }
+
+}
+
+/*
+
+Enter the number of elements in array: 6
+Enter the 1th element: 10
+Enter the 2th element: 7
+Enter the 3th element: 8
+Enter the 4th element: 9
+Enter the 5th element: 1
+Enter the 6th element: 5
+Initial array: [10, 7, 8, 9, 1, 5]
+Sorted array: [1, 5, 7, 8, 9, 10]
+
+Process finished with exit code 0
+
+*/
