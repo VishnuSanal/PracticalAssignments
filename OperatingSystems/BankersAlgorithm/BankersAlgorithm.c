@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-bool bankersAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
+bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
                       int need[n][m], int avail[m], bool isResourceRequest) {
 
   int sequence[n], index = 0;
@@ -48,6 +48,8 @@ bool bankersAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
       if (isResourceRequest)
         printf(" => New request can't be allocated");
 
+      printf("\n\n");
+
       return false;
     }
 
@@ -83,7 +85,7 @@ void resourceRequestAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
     }
   }
 
-  bankersAlgorithm(n, m, alloc, max, need, avail, true);
+  safetyAlgorithm(n, m, alloc, max, need, avail, true);
 }
 
 int main() {
@@ -112,7 +114,7 @@ int main() {
   for (int i = 0; i < m; i++)
     scanf("%d", &avail[i]);
 
-  bool result = bankersAlgorithm(n, m, alloc, max, need, avail, false);
+  bool result = safetyAlgorithm(n, m, alloc, max, need, avail, false);
 
   if (!result)
     return 0;
