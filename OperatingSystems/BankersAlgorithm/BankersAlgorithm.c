@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
-                      int need[n][m], int avail[m], bool isResourceRequest) {
+                     int need[n][m], int avail[m], bool isResourceRequest) {
 
   int sequence[n], index = 0;
 
@@ -19,15 +19,15 @@ bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
     for (int i = 0; i < n; i++)
       if (visited[i] == false) {
 
-        bool flag = false;
+        bool flag = true;
 
         for (int j = 0; j < m; j++)
           if (need[i][j] > avail[j]) {
-            flag = true;
+            flag = false;
             break;
           }
 
-        if (flag == false) {
+        if (flag == true) {
 
           sequence[index++] = i;
 
@@ -43,19 +43,17 @@ bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
   for (int i = 0; i < n; i++)
     if (visited[i] == false) {
       flag = false;
-      printf("System not SAFE");
+      printf("\nSystem not SAFE");
 
       if (isResourceRequest)
         printf(" => New request can't be allocated");
-
-      printf("\n\n");
 
       return false;
     }
 
   if (flag == true) {
 
-    printf("SAFE Sequence: ");
+    printf("\nSAFE Sequence: ");
 
     for (int i = 0; i < n; i++)
       printf("P%d =>\t", sequence[i]);
@@ -73,16 +71,25 @@ void resourceRequestAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
 
   for (int i = 0; i < m; i++) {
     if (request[i] > need[new][i]) {
-      printf(
-          "Invalid request: Request > Need => New request can't be allocated");
+      printf("\nInvalid request: Request > Need => New request can't be "
+             "allocated");
       return;
     }
 
     if (request[i] > avail[i]) {
-      printf(
-          "Invalid request: Request > Avail => New request can't be allocated");
+      printf("\nInvalid request: Request > Avail => New request can't be "
+             "allocated");
       return;
     }
+  }
+
+  for (int i = 0; i < m; i++) {
+
+    avail[i] -= request[i];
+
+    alloc[new][i] += request[i];
+
+    need[new][i] -= request[i];
   }
 
   safetyAlgorithm(n, m, alloc, max, need, avail, true);
@@ -98,7 +105,7 @@ int main() {
   printf("Enter the number of resources (m): ");
   scanf("%d", &m);
 
-  int alloc[n][m], max[n][m], avail[m], need[n][m];
+  int alloc[n][m], max[n][m], avail[m], need[n][m], availCopy[m];
 
   printf("Enter the allocation matrix [n x m]:\n");
   for (int i = 0; i < n; i++)
@@ -111,8 +118,10 @@ int main() {
       scanf("%d", &max[i][j]);
 
   printf("Enter the avail matrix [1 x m]:\n");
-  for (int i = 0; i < m; i++)
+  for (int i = 0; i < m; i++) {
     scanf("%d", &avail[i]);
+    availCopy[i] = avail[i];
+  }
 
   bool result = safetyAlgorithm(n, m, alloc, max, need, avail, false);
 
@@ -128,7 +137,7 @@ int main() {
   for (int i = 0; i < m; i++)
     scanf("%d", &request[i]);
 
-  resourceRequestAlgorithm(n, m, alloc, max, need, avail, request, new);
+  resourceRequestAlgorithm(n, m, alloc, max, need, availCopy, request, new);
 
   printf("\n\n");
 
