@@ -1,89 +1,99 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-void getWaitingTime(int burstTime[], int waitingTime[], int quantum, int n) {
+struct Process {
+  int PID;
+
+  int burstTime;
+
+  int waitingTime;
+  int turnAroundTime;
+};
+
+void getWaitingTime(struct Process processes[], int quantum, int n) {
+
+  int currentTime = 0;
 
   int remainingBurstTime[n];
 
   for (int i = 0; i < n; i++)
-    remainingBurstTime[i] = burstTime[i];
-
-  int currentTime = 0;
+    remainingBurstTime[i] = processes[i].burstTime;
 
   while (true) {
 
-    bool done = true;
+    bool completed = true;
 
     for (int i = 0; i < n; i++) {
 
       if (remainingBurstTime[i] <= 0)
         continue;
 
-      done = false;
+      completed = false;
 
       int prevTime = currentTime;
 
       if (remainingBurstTime[i] > quantum) {
-        currentTime += quantum;
 
         remainingBurstTime[i] -= quantum;
+        currentTime += quantum;
       } else {
+
         currentTime += remainingBurstTime[i];
-
-        waitingTime[i] = currentTime - burstTime[i];
-
         remainingBurstTime[i] = 0;
+
+        processes[i].waitingTime = currentTime - processes[i].burstTime;
       }
 
-      printf("[ %d P%d %d ]", prevTime, i, currentTime);
+      printf(" [ %d P%d %d ]", prevTime, processes[i].PID, currentTime);
     }
 
-    if (done == true)
+    if (completed == true)
       break;
   }
 }
 
-void getTurnAroundTime(int burstTime[], int waitingTime[], int turnAroundTime[],
-                       int n) {
+void getTurnAroundTime(struct Process processes[], int n) {
   for (int i = 0; i < n; i++)
-    turnAroundTime[i] = burstTime[i] + waitingTime[i];
+    processes[i].turnAroundTime =
+        processes[i].burstTime + processes[i].waitingTime;
 }
 
 int main() {
 
-  int n, quantum, totalWaitingTime = 0, totalTurnAroundTime = 0;
+  int n = 0, totalWaitingTime = 0, totalTurnAroundTime = 0, quantum = 0;
 
-  printf("\nEnter the number of processes: ");
-  scanf("%d", &n);
+    printf("\nEnter the number of processes: ");
+    scanf("%d", &n);
 
-  int waitingTime[n], turnAroundTime[n], burstTime[n];
+    printf("\nEnter the time quantum: ");
+    scanf("%d", &quantum);
+
+    struct Process processes[n];
+
+    for (int i = 0; i < n; i++) {
+
+      processes[i].PID = i;
+
+      printf("Enter the Burst Time of %dth process: ", i);
+      scanf("%d", &processes[i].burstTime);
+    }
+
+  getWaitingTime(processes, quantum, n);
+
+  getTurnAroundTime(processes, n);
+
+  printf("\n\nPID\tBT\tWT\tTAT\n");
 
   for (int i = 0; i < n; i++) {
 
-    printf("Enter the Burst Time of %dth process: ", i);
-    scanf("%d", &burstTime[i]);
-  }
+    totalWaitingTime += processes[i].waitingTime;
+    totalTurnAroundTime += processes[i].turnAroundTime;
 
-  printf("Enter the time quantum: ");
-  scanf("%d", &quantum);
+    printf("P%d	", processes[i].PID);
+    printf("%d	", processes[i].burstTime);
 
-  getWaitingTime(burstTime, waitingTime, quantum, n);
-
-  getTurnAroundTime(burstTime, waitingTime, turnAroundTime, n);
-
-  printf("\nPID\tBT\tWT\tTAT\n");
-
-  for (int i = 0; i < n; i++) {
-
-    totalWaitingTime += waitingTime[i];
-
-    totalTurnAroundTime += turnAroundTime[i];
-
-    printf("P%d	", i);
-    printf("%d	", burstTime[i]);
-
-    printf("%d	", waitingTime[i]);
-    printf("%d	\n", turnAroundTime[i]);
+    printf("%d	", processes[i].waitingTime);
+    printf("%d	\n", processes[i].turnAroundTime);
   }
 
   printf("\nAverage WaitingTime: %f", (float)totalWaitingTime / (float)n);
