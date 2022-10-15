@@ -1,39 +1,37 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main() {
-    
-    int n, totalHeadMovement = 0, previous = 0, current = 0;
 
-    printf("Number of Requests: ");
-    scanf("%d",&n);
+  int n, totalHeadMovement = 0, previous = 0, current = 0;
 
-    int requests[n];
+  printf("Number of Requests: ");
+  scanf("%d", &n);
 
-    printf("Initial Head Position: ");
-    scanf("%d",&previous);
+  int requests[n];
 
-    printf("Requests Sequence:\n");
-    for(int i=0; i < n; i++) {
+  printf("Initial Head Position: ");
+  scanf("%d", &previous);
 
-        printf("%dth Request: ", i);
-        scanf("%d", &requests[i]);
-    }
+  printf("Requests Sequence:\n");
+  for (int i = 0; i < n; i++) {
 
-    printf("Traversal Order: ");
-    for(int i = 0; i < n; i++) {
+    printf("%dth Request: ", i);
+    scanf("%d", &requests[i]);
+  }
 
-        printf("%d => ", requests[i]);
+  printf("Traversal Order: ");
+  for (int i = 0; i < n; i++) {
 
-        totalHeadMovement += abs(requests[i] - previous);
-        previous = requests[i];
+    printf("%d => ", requests[i]);
 
-    }
-    
-    printf("\n\nTotal Head Movement: %d",totalHeadMovement);
+    totalHeadMovement += abs(requests[i] - previous);
+    previous = requests[i];
+  }
 
-    printf("\n\n");
+  printf("\n\nTotal Head Movement: %d", totalHeadMovement);
 
-    return 0;
-    
+  printf("\n\n");
+
+  return 0;
 }

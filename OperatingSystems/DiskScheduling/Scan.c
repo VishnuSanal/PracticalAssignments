@@ -34,7 +34,6 @@ int main() {
 
     printf("%dth Request: ", i);
     scanf("%d", &requests[i]);
-
   }
 
   printf("\nMove Direction -> Enter 0 for low and 1 for high: ");

@@ -62,21 +62,21 @@ int main() {
 
   int n = 0, totalWaitingTime = 0, totalTurnAroundTime = 0, quantum = 0;
 
-    printf("\nEnter the number of processes: ");
-    scanf("%d", &n);
+  printf("\nEnter the number of processes: ");
+  scanf("%d", &n);
 
-    printf("\nEnter the time quantum: ");
-    scanf("%d", &quantum);
+  printf("\nEnter the time quantum: ");
+  scanf("%d", &quantum);
 
-    struct Process processes[n];
+  struct Process processes[n];
 
-    for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) {
 
-      processes[i].PID = i;
+    processes[i].PID = i;
 
-      printf("Enter the Burst Time of %dth process: ", i);
-      scanf("%d", &processes[i].burstTime);
-    }
+    printf("Enter the Burst Time of %dth process: ", i);
+    scanf("%d", &processes[i].burstTime);
+  }
 
   getWaitingTime(processes, quantum, n);
 

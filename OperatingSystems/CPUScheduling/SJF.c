@@ -4,7 +4,7 @@ struct Process {
 
   int PID;
   int burstTime;
-  
+
   int waitingTime;
   int turnAroundTime;
 };

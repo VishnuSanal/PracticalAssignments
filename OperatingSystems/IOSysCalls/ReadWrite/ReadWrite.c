@@ -1,39 +1,41 @@
-#include<stdio.h>
-#include<unistd.h>
-#include<fcntl.h>
-#include<string.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
-void main() {	
+int main() {
 
-	int file_descriptor = open("test.txt", O_RDWR | O_CREAT);
-	
-	printf("\nFile Descriptor: %d\n", file_descriptor);
+  int file_descriptor = open("test.txt", O_RDWR | O_CREAT);
 
-	if (file_descriptor == -1) {
-		
-		printf("\nError: Couldn't open file\n");
-		return;
-	}
-	
-	printf("\nThe file opened with read & write access\n");
+  printf("\nFile Descriptor: %d\n", file_descriptor);
 
-	char buffer[100]; 
+  if (file_descriptor == -1) {
 
-	printf("\nEnter a string value to write: ");
+    printf("\nError: Couldn't open file\n");
+    return 1;
+  }
 
-	scanf("%s", buffer);
-	
-	char message[strlen(buffer)];
-	
-	strcpy(message, buffer);
+  printf("\nThe file opened with read & write access\n");
 
-	write(file_descriptor, message, sizeof(message));
+  char buffer[100];
 
-	lseek(file_descriptor, 0, SEEK_SET);
+  printf("\nEnter a string value to write: ");
 
-	read(file_descriptor, buffer, sizeof(message));
+  scanf("%s", buffer);
 
-	printf("\n\"%s\" was written onto the file\n", buffer);
+  char message[strlen(buffer)];
 
-	close(file_descriptor);
+  strcpy(message, buffer);
+
+  write(file_descriptor, message, sizeof(message));
+
+  lseek(file_descriptor, 0, SEEK_SET);
+
+  read(file_descriptor, buffer, sizeof(message));
+
+  printf("\n\"%s\" was written onto the file\n", buffer);
+
+  close(file_descriptor);
+
+  return 0;
 }
