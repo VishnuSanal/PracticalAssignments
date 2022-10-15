@@ -15,35 +15,35 @@ bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
     for (int j = 0; j < m; j++)
       need[i][j] = max[i][j] - alloc[i][j];
 
-  for (int k = 0; k < n; k++)
-    for (int i = 0; i < n; i++)
-      if (visited[i] == false) {
+  for (int i = 0; i < n; i++)
+    for (int j = 0; j < n; j++) {
 
-        bool flag = true;
+      if (visited[j] == true)
+        continue;
 
-        for (int j = 0; j < m; j++)
-          if (need[i][j] > avail[j]) {
-            flag = false;
-            break;
-          }
+      bool flag = true;
 
-        if (flag == true) {
-
-          sequence[index++] = i;
-
-          for (int y = 0; y < m; y++)
-            avail[y] += alloc[i][y];
-
-          visited[i] = true;
+      for (int k = 0; k < m; k++)
+        if (need[j][k] > avail[k]) {
+          flag = false;
+          break;
         }
-      }
 
-  bool flag = true;
+      if (flag == true) {
+
+        sequence[index++] = j;
+
+        for (int k = 0; k < m; k++)
+          avail[k] += alloc[j][k];
+
+        visited[j] = true;
+      }
+    }
 
   for (int i = 0; i < n; i++)
     if (visited[i] == false) {
-      flag = false;
-      printf("\nSystem not SAFE");
+
+      printf("\nSystem not SAFE\n");
 
       if (isResourceRequest)
         printf(" => New request can't be allocated");
@@ -51,16 +51,13 @@ bool safetyAlgorithm(int n, int m, int alloc[n][m], int max[n][m],
       return false;
     }
 
-  if (flag == true) {
+  printf("\nSAFE Sequence: ");
 
-    printf("\nSAFE Sequence: ");
+  for (int i = 0; i < n; i++)
+    printf("P%d =>\t", sequence[i]);
 
-    for (int i = 0; i < n; i++)
-      printf("P%d =>\t", sequence[i]);
-
-    if (isResourceRequest)
-      printf("\n => New request can be allocated");
-  }
+  if (isResourceRequest)
+    printf("\n => New request can be allocated");
 
   return true;
 }
