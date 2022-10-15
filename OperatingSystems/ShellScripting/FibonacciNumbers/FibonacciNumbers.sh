@@ -2,16 +2,17 @@
 
 N=$1
 
-A=0
-B=1
-NEXT=0
+PREV=1
+CURRENT=0
+NEXT=1
 
-for (( i=1; i<$N; i++ ))
-do
-	echo -n "$B "
-	NEXT=`expr $A + $B`
-	A=$B
-	B=$NEXT
+for (( I=0; I < N; I++ )); do 
+
+    echo -n "$CURRENT "
+    PREV=$CURRENT
+    CURRENT=$NEXT
+    NEXT=$(($PREV + $CURRENT))
+
 done
 
 echo
