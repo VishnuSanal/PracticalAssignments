@@ -2,103 +2,119 @@
 #include <semaphore.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <unistd.h>
 
-#define N 5
+#define BUFFER_SIZE 5
 
-#define EATING 0
-#define HUNGRY 1
-#define THINKING 2
+#define PRODUCERS 5
+#define CONSUMERS 5
 
-#define LEFT (p + 4) % N
-#define RIGHT (p + 1) % N
+int buffer[BUFFER_SIZE];
+pthread_mutex_t mutex;
+sem_t full, empty;
 
-int state[N];
-int phil[N] = {0, 1, 2, 3, 4};
+int count, produceIndex, consumeIndex;
 
-sem_t mutex;
-sem_t S[N];
+bool insertItem(int item) {
 
-void test(int p) {
+  bool success = false;
 
-  if (state[p] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING) {
+  sem_wait(&empty);
+  pthread_mutex_lock(&mutex);
 
-    state[p] = EATING;
-
-    sleep(2);
-
-    printf("P%d takes F%d and F%d\n", p, LEFT, p);
-
-    printf("P%d is eating\n", p);
-
-    sem_post(&S[p]);
+  if (count != BUFFER_SIZE) {
+    buffer[produceIndex] = item;
+    produceIndex = (produceIndex + 1) % BUFFER_SIZE;
+    count++;
+    success = true;
   }
+
+  pthread_mutex_unlock(&mutex);
+  sem_post(&full);
+
+  return success;
 }
 
-void takeFork(int p) {
+bool removeItem(int *item) {
 
-  sem_wait(&mutex);
+  bool success = false;
 
-  state[p] = HUNGRY;
+  sem_wait(&full);
+  pthread_mutex_lock(&mutex);
 
-  printf("P%d is hungry\n", p);
+  if (count != 0) {
+    *item = buffer[consumeIndex];
+    consumeIndex = (consumeIndex + 1) % BUFFER_SIZE;
+    count--;
+    success = true;
+  }
 
-  test(p);
+  pthread_mutex_unlock(&mutex);
+  sem_post(&empty);
 
-  sem_post(&mutex);
-
-  sem_wait(&S[p]);
-
-  sleep(1);
+  return success;
 }
 
-void putFork(int p) {
-
-  sem_wait(&mutex);
-
-  state[p] = THINKING;
-
-  printf("P%d puts F%d and F%d down\n", p, LEFT, p);
-  printf("P%d is thinking\n", p);
-
-  test(LEFT);
-  test(RIGHT);
-
-  sem_post(&mutex);
-}
-
-void *philosopher(void *p) {
+void *producer() {
 
   while (true) {
 
-    int *i = p;
+    sleep(rand() % 5 + 1);
 
-    sleep(1);
+    int item = rand() % 10;
+    // int item = rand() % 10;
 
-    takeFork(*i);
+    if (!insertItem(item))
+      printf("Error\n");
+    else
+      printf("Producer Produced: %d\n", item);
+  }
+}
 
-    sleep(0);
+void *consumer(void *param) {
 
-    putFork(*i);
+  int item;
+
+  while (true) {
+
+    sleep(rand() % 5 + 1);
+
+    if (!removeItem(&item))
+      printf("Error\n");
+    else
+      printf("Consumer Consumed: %d\n", item);
   }
 }
 
 int main() {
 
-  pthread_t thread_id[N];
+  srand(time(NULL));
 
-  sem_init(&mutex, 0, 1);
+  pthread_mutex_init(&mutex, NULL);
 
-  for (int i = 0; i < N; i++)
-    sem_init(&S[i], 0, 0);
+  sem_init(&empty, 0, BUFFER_SIZE);
 
-  for (int i = 0; i < N; i++) {
+  sem_init(&full, 0, 0);
 
-    pthread_create(&thread_id[i], NULL, philosopher, &phil[i]);
+  count = produceIndex = consumeIndex = 0;
 
-    printf("P%d is thinking\n", i);
-  }
+  pthread_t producers[PRODUCERS];
+  pthread_t consumers[CONSUMERS];
 
-  for (int i = 0; i < N; i++)
-    pthread_join(thread_id[i], NULL);
+  for (int i = 0; i < PRODUCERS; i++)
+    pthread_create(&producers[i], NULL, producer, NULL);
+
+  for (int i = 0; i < CONSUMERS; i++)
+    pthread_create(&consumers[i], NULL, consumer, NULL);
+
+  for (int i = 0; i < PRODUCERS; i++)
+    pthread_join(producers[i], NULL);
+
+  for (int i = 0; i < CONSUMERS; i++)
+    pthread_join(consumers[i], NULL);
+
+  return 0;
 }

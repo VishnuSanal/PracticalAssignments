@@ -5,11 +5,13 @@
 #include <unistd.h>
 
 #define N 5
-#define THINKING 2
-#define HUNGRY 1
+
 #define EATING 0
-#define LEFT (philosopher + 4) % N
-#define RIGHT (philosopher + 1) % N
+#define HUNGRY 1
+#define THINKING 2
+
+#define LEFT (p + 4) % N
+#define RIGHT (p + 1) % N
 
 int state[N];
 int phil[N] = {0, 1, 2, 3, 4};
@@ -17,50 +19,47 @@ int phil[N] = {0, 1, 2, 3, 4};
 sem_t mutex;
 sem_t S[N];
 
-void test(int philosopher) {
+void test(int p) {
 
-  if (state[philosopher] == HUNGRY && state[LEFT] != EATING &&
-      state[RIGHT] != EATING) {
+  if (state[p] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING) {
 
-    state[philosopher] = EATING;
+    state[p] = EATING;
 
     sleep(2);
 
-    printf("Philosopher %d takes fork %d and %d\n", philosopher + 1, LEFT + 1,
-           philosopher + 1);
+    printf("P%d takes F%d and F%d\n", p, LEFT, p);
 
-    printf("Philosopher %d is Eating\n", philosopher + 1);
+    printf("P%d is eating\n", p);
 
-    sem_post(&S[philosopher]);
+    sem_post(&S[p]);
   }
 }
 
-void takeFork(int philosopher) {
+void takeFork(int p) {
 
   sem_wait(&mutex);
 
-  state[philosopher] = HUNGRY;
+  state[p] = HUNGRY;
 
-  printf("Philosopher %d is Hungry\n", philosopher + 1);
+  printf("P%d is hungry\n", p);
 
-  test(philosopher);
+  test(p);
 
   sem_post(&mutex);
 
-  sem_wait(&S[philosopher]);
+  sem_wait(&S[p]);
 
   sleep(1);
 }
 
-void putFork(int philosopher) {
+void putFork(int p) {
 
   sem_wait(&mutex);
 
-  state[philosopher] = THINKING;
+  state[p] = THINKING;
 
-  printf("Philosopher %d putting fork %d and %d down\n", philosopher + 1,
-         LEFT + 1, philosopher + 1);
-  printf("Philosopher %d is thinking\n", philosopher + 1);
+  printf("P%d puts F%d and F%d down\n", p, LEFT, p);
+  printf("P%d is thinking\n", p);
 
   test(LEFT);
   test(RIGHT);
@@ -68,11 +67,11 @@ void putFork(int philosopher) {
   sem_post(&mutex);
 }
 
-void *philosopher(void *num) {
+void *philosopher(void *p) {
 
   while (true) {
 
-    int *i = num;
+    int *i = p;
 
     sleep(1);
 
@@ -97,7 +96,7 @@ int main() {
 
     pthread_create(&thread_id[i], NULL, philosopher, &phil[i]);
 
-    printf("Philosopher %d is thinking\n", i + 1);
+    printf("P%d is thinking\n", i);
   }
 
   for (int i = 0; i < N; i++)
