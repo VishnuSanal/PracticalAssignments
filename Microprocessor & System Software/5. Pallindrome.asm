@@ -33,11 +33,9 @@
 	CALL readstring
 	
 	MOV DX, OFFSET displayprompt
-	INT 21H
-	
+	INT 21H	
 	MOV DX, OFFSET string
 	INT 21H
-
 	MOV DX, OFFSET newline
 	INT 21H
 	
@@ -47,14 +45,7 @@
 
 	MOV DX, OFFSET newline
 	INT 21H
-
-	; DEBUG
-	MOV AH, 02H
-	MOV DL, CL
-	ADD DL, 30H
-	INT 21H
-	; DEBUG
-
+	
 	CMP CL, 01H
 	JE successlabel
 	
@@ -89,6 +80,7 @@ pallindromecheck PROC NEAR
 
 traverselabel:
 
+	MOV AH, 0H
 	MOV AL, [SI]
 
 	CMP AL, '$'
@@ -101,15 +93,11 @@ traverselabel:
 
 endlabel:
 
+	DEC SI
+
 	MOV DI, SI
 	
 	MOV SI, OFFSET string
-
-	MOV AX, CX
-	MOV BL, 02
-	
-	DIV BL
-	MOV CX, AX
 
 checklooplabel:
 
@@ -119,12 +107,11 @@ checklooplabel:
 	CMP AL, BL
 	JNE falselabel
 	
-	CMP CL, 00
+	CMP SI, DI
 	JE truelabel
 	
 	INC SI
 	DEC DI
-	DEC CL
 
 	JMP checklooplabel
 
