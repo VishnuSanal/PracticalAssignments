@@ -1,5 +1,3 @@
-; Not Working : Always shows not a pallindrome!
-
 .model small
 
 .stack 100H
@@ -13,8 +11,6 @@
 	validpallindrome DB 'Given String is a Valid Pallindrome$'
 
 	invalidpallindrome DB 'Given String is a not a Valid Pallindrome$'
-	
-	debugprompt DB 'Debug: $'
 
 	newline DB 10, 13, '$'
 
