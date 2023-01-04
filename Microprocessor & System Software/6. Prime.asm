@@ -16,9 +16,15 @@
 	
 	MOV DX, 0H
 	
+	PUSH AX
+	PUSH DX
+	
 	MOV AH, 09H
 	MOV DX, OFFSET limitprompt
 	INT 21H
+
+	POP DX
+	POP AX
 
 	CALL readnumber
 
@@ -65,9 +71,8 @@ checkprime PROC NEAR
 	
 	MOV BL, 0H
 	
-; TODO: print "2" : error now whilst doing this
-;	CMP AL, 2H
-;	JE primelabel
+	CMP AL, 2
+	JE primelabel
 	
 	CMP AL, 1H
 	JBE notprimelabel
