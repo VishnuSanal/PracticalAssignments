@@ -107,6 +107,11 @@ checklooplabel:
 	JE truelabel
 	
 	INC SI
+	CMP SI, DI
+	JE truelabel
+	DEC SI
+	
+	INC SI
 	DEC DI
 
 	JMP checklooplabel
