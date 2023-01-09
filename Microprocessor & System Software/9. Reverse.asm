@@ -12,9 +12,6 @@
 	
 	resultprompt DB 'Reversed String: $'
 	
-	debug DB 'debug$'
-	debugreverse DB 'reverse$'
-	
 	newline DB 10, 13, '$'
 	
 	string DB 50 DUP (?)
@@ -154,46 +151,5 @@ readlooplabel:
 	RET
 
 readstring ENDP
-
-displaynumber PROC NEAR
-
-	PUSH AX
-	PUSH BX
-	PUSH CX
-	PUSH DX
-	
-	MOV CX, 00
-	
-	MOV BX, 10
-
-looplabelone:
-	MOV DX, 00
-	
-	DIV BX
-	
-	PUSH DX
-	
-	INC CX
-	
-	CMP AX, 00
-	JNE looplabelone
-	
-looplabeltwo:	
-	POP DX
-	ADD DL, 30H
-	
-	MOV AH, 02H
-	INT 21H
-	
-	LOOP looplabeltwo	
-	
-	POP DX
-	POP CX
-	POP BX
-	POP AX
-
-	RET
-
-displaynumber ENDP
 
 end
