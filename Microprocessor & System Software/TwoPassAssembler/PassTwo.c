@@ -10,17 +10,14 @@ int main() {
 
   int start, address, previousAddress;
 
-  char mnemonic[15][15] = {"LDA", "STA", "LDCH", "STCH"};
+  FILE *symtabFile, *intermediateFile, *optabFile, *outputFile, *objectCodeFile;
 
-  char code[15][15] = {"33", "44", "53", "57"};
+  symtabFile = fopen("files/symtab.txt", "r");
+  optabFile = fopen("files/optab.txt", "r");
+  intermediateFile = fopen("files/intermediate.txt", "r");
 
-  FILE *symtabFile, *intermediateFile, *outputFile, *objectCodeFile;
-
-  symtabFile = fopen("symtab.txt", "r");
-  intermediateFile = fopen("intermediate.txt", "r");
-
-  outputFile = fopen("output.txt", "w");
-  objectCodeFile = fopen("objectcode.txt", "w");
+  outputFile = fopen("files/output.txt", "w");
+  objectCodeFile = fopen("files/objectcode.txt", "w");
 
   fscanf(intermediateFile, "%s\t%s\t%s", label, opcode, operand);
 
@@ -31,9 +28,7 @@ int main() {
 
   int finalAddress = address;
 
-  fclose(intermediateFile);
-
-  intermediateFile = fopen("intermediate.txt", "r");
+  rewind(intermediateFile);
 
   fscanf(intermediateFile, "\t%s\t%s\t%s", label, opcode, operand);
 
@@ -59,60 +54,59 @@ int main() {
 
       for (int i = 2; i < (strlen(operand) - 1); i++) {
 
-        char operandObjectCode[10];
+        char byteObjectCode[10];
 
-        sprintf(operandObjectCode, "%X", operand[i]);
+        sprintf(byteObjectCode, "%X", operand[i]);
 
-        fprintf(outputFile, "%s", operandObjectCode);
-        fprintf(objectCodeFile, "%s", operandObjectCode);
+        fprintf(outputFile, "%s", byteObjectCode);
+        fprintf(objectCodeFile, "%s", byteObjectCode);
       }
 
       fprintf(outputFile, "\n");
     } else if (strcmp(opcode, "WORD") == 0) {
 
-      char operandObjectCode[10];
+      char wordObjectCode[10];
 
-      sprintf(operandObjectCode, "%d", atoi(operand));
+      sprintf(wordObjectCode, "%d", atoi(operand));
 
       fprintf(outputFile, "%d\t%s\t%s\t%s\t00000%s\n", address, label, opcode,
-              operand, operandObjectCode);
-      fprintf(objectCodeFile, "^00000%s", operandObjectCode);
+              operand, wordObjectCode);
+
+      fprintf(objectCodeFile, "^00000%s", wordObjectCode);
+
     } else if ((strcmp(opcode, "RESB") == 0) || (strcmp(opcode, "RESW") == 0))
       fprintf(outputFile, "%d\t%s\t%s\t%s\n", address, label, opcode, operand);
 
     else {
 
-      int index = 0;
+      char optabOpcode[10], objectCode[10];
 
-      while (strcmp(opcode, mnemonic[index]) != 0)
-        index++;
+      fscanf(optabFile, "%s\t%s", optabOpcode, objectCode);
 
-      if (strcmp(operand, "COPY") == 0)
-        fprintf(outputFile, "%d\t%s\t%s\t%s\t%s0000\n", address, label, opcode,
-                operand, code[index]);
+      while (strcmp(optabOpcode, "END") != 0 &&
+             strcmp(opcode, optabOpcode) != 0)
+        fscanf(optabFile, "%s\t%s", optabOpcode, objectCode);
 
-      else {
+      int symbolAddress;
 
-        int add;
+      rewind(symtabFile);
 
-        rewind(symtabFile);
+      fscanf(symtabFile, "%s%d", symbol, &symbolAddress);
 
-        fscanf(symtabFile, "%s%d", symbol, &add);
+      while (strcmp(operand, symbol) != 0)
+        fscanf(symtabFile, "%s%d", symbol, &symbolAddress);
 
-        while (strcmp(operand, symbol) != 0)
-          fscanf(symtabFile, "%s%d", symbol, &add);
+      fprintf(outputFile, "%d\t%s\t%s\t%s\t%s%d\n", address, label, opcode,
+              operand, objectCode, symbolAddress);
 
-        fprintf(outputFile, "%d\t%s\t%s\t%s\t%s%d\n", address, label, opcode,
-                operand, code[index], add);
-
-        fprintf(objectCodeFile, "^%s%d", code[index], add);
-      }
+      fprintf(objectCodeFile, "^%s%d", objectCode, symbolAddress);
     }
 
     fscanf(intermediateFile, "%d%s%s%s", &address, label, opcode, operand);
   }
 
   fprintf(outputFile, "%d\t%s\t%s\t%s\n", address, label, opcode, operand);
+  
   fprintf(objectCodeFile, "\nE^00%d", start);
 
   fclose(objectCodeFile);
@@ -120,10 +114,10 @@ int main() {
   fclose(symtabFile);
   fclose(outputFile);
 
-  printFile("Intermediate File:", "intermediate.txt");
-  printFile("Symbol Table:", "symtab.txt");
-  printFile("Output File:", "output.txt");
-  printFile("Object Code:", "objectcode.txt");
+  printFile("Intermediate File:", "files/intermediate.txt");
+  printFile("Symbol Table:", "files/symtab.txt");
+  printFile("Output File:", "files/output.txt");
+  printFile("Object Code:", "files/objectcode.txt");
 
   printf("\n\n");
 
