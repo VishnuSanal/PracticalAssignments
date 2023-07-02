@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 int main() {
@@ -55,7 +56,7 @@ int main() {
 
   while (true) {
 
-    read(connectionFD, buffer, sizeof(buffer));
+    recv(connectionFD, buffer, sizeof(buffer), 0);
 
     printf("\nFrom Client: %s\n\tTo Client: ", buffer);
 
@@ -63,8 +64,7 @@ int main() {
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
-    write(connectionFD, buffer, sizeof(buffer));
-
+    send(connectionFD, buffer, sizeof(buffer), 0);
   }
 
   printf("\n\n");

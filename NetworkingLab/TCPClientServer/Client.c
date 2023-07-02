@@ -42,9 +42,9 @@ int main() {
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
-    write(socketFD, buffer, sizeof(buffer));
+    send(socketFD, buffer, sizeof(buffer), 0);
 
-    read(socketFD, buffer, sizeof(buffer));
+    recv(socketFD, buffer, sizeof(buffer), 0);
 
     printf("\n\tFrom Server : %s", buffer);
   }
