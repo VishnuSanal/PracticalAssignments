@@ -15,10 +15,11 @@ int main() {
   socketFD = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
   if (socketFD == -1) {
-    printf("Socket creation failed.\n");
+    printf("\nSocket creation failed.");
     return 1;
-  } else
-    printf("Socket successfully created..\n");
+  }
+
+  printf("\nSocket successfully created!");
 
   bzero(&serverAddress, sizeof(serverAddress));
 
@@ -28,23 +29,26 @@ int main() {
 
   if ((bind(socketFD, (struct sockaddr *)&serverAddress,
             sizeof(serverAddress))) != 0) {
-    printf("Socket binding failed...\n");
+    printf("\nSocket binding failed.");
     return 1;
-  } else
-    printf("Socket successfully binded..\n");
+  }
+
+  printf("\nSocket successfully bound!");
 
   socklen_t len = sizeof(clientAddress);
 
   char buffer[MAX];
 
   while (true) {
-    bzero(buffer, MAX);
+
+    bzero(&buffer, MAX);
 
     recvfrom(socketFD, buffer, sizeof(buffer), 0,
              (struct sockaddr *)&clientAddress, &len);
 
     printf("From client: %s\t To client : ", buffer);
-    bzero(buffer, MAX);
+
+    bzero(&buffer, MAX);
 
     int n = 0;
     while ((buffer[n++] = getchar()) != '\n')
@@ -52,11 +56,6 @@ int main() {
 
     sendto(socketFD, buffer, sizeof(buffer), 0,
            (struct sockaddr *)&clientAddress, sizeof(clientAddress));
-
-    if (strncmp("exit", buffer, 4) == 0) {
-      printf("Server Exit...\n");
-      break;
-    }
   }
 
   close(socketFD);
