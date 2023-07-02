@@ -1,62 +1,78 @@
-#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
+#include <strings.h>
 #include <unistd.h>
 
-#define PORT 5035
-#define MAX 60
+#define MAX 80
 
 int main() {
 
-  int socketFD, connectionFD;
-  socklen_t clientLength;
+  int socketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP), connectionFD;
+
+  if (socketFD == -1) {
+    printf("\nSocket creation failed.");
+    return 1;
+  }
+
+  printf("\nSocket creation successful!");
 
   struct sockaddr_in serverAddress, clientAddress;
 
-  socketFD = socket(AF_INET, SOCK_STREAM, 0);
+  bzero(&serverAddress, sizeof(serverAddress));
 
   serverAddress.sin_family = AF_INET;
-  serverAddress.sin_addr.s_addr = INADDR_ANY;
-  serverAddress.sin_port = htons(PORT);
+  serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+  serverAddress.sin_port = htons(5035);
 
-  if ((bind(socketFD, (struct sockaddr *)&serverAddress,
-            sizeof(serverAddress))) != 0) {
-    printf("Socket binding failed...\n");
+  if (bind(socketFD, (struct sockaddr *)&serverAddress,
+           sizeof(serverAddress)) != 0) {
+    printf("\nSocket binding failed.");
     return 1;
-  } else
-    printf("Socket successfully binded..\n");
+  }
 
-  printf("\nListening...");
+  printf("\nSocket binding successful!");
 
-  listen(socketFD, 5);
+  if (listen(socketFD, 5) != 0) {
+    printf("\nSocket listen failed.");
+    return 1;
+  }
 
-  clientLength = sizeof(clientAddress);
+  printf("\nSocket listening...");
 
-  connectionFD =
-      accept(socketFD, (struct sockaddr *)&clientAddress, &clientLength);
+  socklen_t len = sizeof(clientAddress);
+
+  connectionFD = accept(socketFD, (struct sockaddr *)&clientAddress, &len);
 
   close(socketFD);
 
-  char fileName[MAX], buffer[4096];
-
-  read(connectionFD, &fileName, MAX);
-
-  printf("\nFilename from Client: %s\n", fileName);
-
-  if (access(fileName, F_OK) != 0) {
-    printf("Something went wrong!\n");
+  if (connectionFD == -1) {
+    printf("\nClient accept failed.");
     return 1;
   }
 
-  FILE *file = fopen(fileName, "r");
+  printf("\nClient accept successful!");
 
-  printf("\nFile contents:\n");
-  while (fgets(buffer, 4096, file) != NULL) {
-    printf("%s", buffer);
-  }
+  char buffer[MAX];
 
-  fclose(file);
+  bzero(buffer, MAX);
 
+  recv(connectionFD, buffer, sizeof(buffer), 0);
+
+  printf("\nFileName: %s\n", buffer);
+
+  FILE *file = fopen(buffer, "r");
+  
+  if (file) {
+    int c;
+    while ((c = fgetc(file)) != EOF)
+      putchar(c);
+    fclose(file);
+  } else
+    printf("Something went wrong!\n");
+
+  close(connectionFD);
+
+  printf("\n\n");
   return 0;
 }
