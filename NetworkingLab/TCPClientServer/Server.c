@@ -1,11 +1,9 @@
-#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <unistd.h>
-
-#define MAX 80
-#define PORT 8080
 
 int main() {
 
@@ -15,62 +13,62 @@ int main() {
   socketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
   if (socketFD == -1) {
-    printf("socket creation failed...\n");
+    printf("\nSocket creation failed.");
     return 1;
-  } else
-    printf("Socket successfully created..\n");
+  }
+
+  printf("\nSocket successfully created!");
 
   bzero(&serverAddress, sizeof(serverAddress));
 
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddress.sin_port = htons(PORT);
+  serverAddress.sin_port = htons(8080);
 
-  if ((bind(socketFD, (struct sockaddr *)&serverAddress,
-            sizeof(serverAddress))) != 0) {
-    printf("Socket binding failed...\n");
+  if (bind(socketFD, (struct sockaddr *)&serverAddress,
+           sizeof(serverAddress)) != 0) {
+    printf("\nSocket binding failed.");
     return 1;
-  } else
-    printf("Socket successfully binded..\n");
+  }
 
-  if ((listen(socketFD, 5)) != 0) {
-    printf("Listen failed...\n");
+  printf("\nSocket successfully bound!");
+
+  if (listen(socketFD, 5) == -1) {
+    printf("\nListening failed.");
     return 1;
-  } else
-    printf("Server listening..\n");
+  }
+
+  printf("\nListening...");
 
   socklen_t len = sizeof(clientAddress);
 
   connectionFD = accept(socketFD, (struct sockaddr *)&clientAddress, &len);
 
-  if (connectionFD < 0) {
-    printf("Server accept failed...\n");
+  if (connectionFD == -1) {
+    printf("\nClient accept failed.");
     return 1;
-  } else
-    printf("Server accept the client...\n");
+  }
 
-  char buffer[MAX];
+  printf("\nClient accept successful.");
+
+  char buffer[80];
 
   while (true) {
-    bzero(buffer, MAX);
 
     read(connectionFD, buffer, sizeof(buffer));
 
-    printf("From client: %s\t To client : ", buffer);
-    bzero(buffer, MAX);
+    printf("\nFrom Client: %s\n\tTo Client: ", buffer);
 
-    int n = 0;
+    int n;
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
     write(connectionFD, buffer, sizeof(buffer));
 
-    if (strncmp("exit", buffer, 4) == 0) {
-      printf("Server Exit...\n");
-      break;
-    }
   }
 
+  printf("\n\n");
+  close(connectionFD);
   close(socketFD);
 
   return 0;

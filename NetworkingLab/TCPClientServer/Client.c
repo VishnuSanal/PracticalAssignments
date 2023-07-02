@@ -1,64 +1,55 @@
 #include <arpa/inet.h>
-#include <netinet/in.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
-#define MAX 80
-#define PORT 8080
-
 int main() {
 
-  int socketFD, connectionFD;
-  struct sockaddr_in serverAddress;
+  int socketFD;
+  struct sockaddr_in serverAddress, clientAddress;
 
-  socketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+  socketFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
   if (socketFD == -1) {
-    printf("Socket creation failed.\n");
+    printf("\nSocket creation failed.");
     return 1;
-  } else
-    printf("Socket successfully created..\n");
+  }
+
+  printf("\nSocket successfully created!");
 
   bzero(&serverAddress, sizeof(serverAddress));
 
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-  serverAddress.sin_port = htons(PORT);
+  serverAddress.sin_port = htons(8080);
 
   if (connect(socketFD, (struct sockaddr *)&serverAddress,
               sizeof(serverAddress)) != 0) {
-    printf("Connection with the server failed...\n");
+    printf("\nServer connection failed.");
     return 1;
-  } else
-    printf("Connected to the server..\n");
+  }
 
-  char buffer[MAX];
+  printf("\nServer connected successfully!");
+
+  char buffer[80];
 
   while (true) {
-    bzero(buffer, sizeof(buffer));
 
-    printf("Enter the string : ");
+    printf("\nTo Server: ");
 
-    int n = 0;
+    int n;
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
     write(socketFD, buffer, sizeof(buffer));
 
-    bzero(buffer, sizeof(buffer));
-
     read(socketFD, buffer, sizeof(buffer));
 
-    printf("\tFrom Server : %s", buffer);
-
-    if ((strncmp(buffer, "exit", 4)) == 0) {
-      printf("Client Exit...\n");
-      break;
-    }
+    printf("\n\tFrom Server : %s", buffer);
   }
 
+  printf("\n\n");
   close(socketFD);
 
   return 0;
