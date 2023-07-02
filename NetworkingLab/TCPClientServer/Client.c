@@ -2,7 +2,6 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -18,7 +17,7 @@ int main() {
 
   if (socketFD == -1) {
     printf("Socket creation failed.\n");
-    exit(0);
+    return 1;
   } else
     printf("Socket successfully created..\n");
 
@@ -31,7 +30,7 @@ int main() {
   if (connect(socketFD, (struct sockaddr *)&serverAddress,
               sizeof(serverAddress)) != 0) {
     printf("Connection with the server failed...\n");
-    exit(0);
+    return 1;
   } else
     printf("Connected to the server..\n");
 
@@ -61,4 +60,6 @@ int main() {
   }
 
   close(socketFD);
+
+  return 0;
 }
