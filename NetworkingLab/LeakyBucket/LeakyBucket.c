@@ -23,15 +23,14 @@ int main() {
       printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
     } else {
 
-      printf("Dropped %d packets\n",
-             packetSize - bucketSize + remainingSize);
-      printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
+      printf("Dropped %d packets\n", packetSize - bucketSize + remainingSize);
       remainingSize = bucketSize;
+      printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
     }
 
     remainingSize = remainingSize - outputRate;
 
-    printf("After outgoing, Bucket contents: (%d/%d)\n",
-           remainingSize, bucketSize);
+    printf("After outgoing, Bucket contents: (%d/%d)\n", remainingSize,
+           bucketSize);
   }
 }

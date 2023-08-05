@@ -42,7 +42,7 @@ int main() {
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
-    send(socketFD, buffer, strlen(buffer)+1, 0);
+    send(socketFD, buffer, strlen(buffer) + 1, 0);
 
     recv(socketFD, buffer, sizeof(buffer), 0);
 
