@@ -24,7 +24,7 @@ int main() {
     } else {
 
       printf("Dropped %d packets\n",
-             packetSize - bucketSize - remainingSize);
+             packetSize - bucketSize + remainingSize);
       printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
       remainingSize = bucketSize;
     }
