@@ -56,15 +56,17 @@ int main() {
 
   while (true) {
 
+    int n = 0;
     recv(connectionFD, buffer, sizeof(buffer), 0);
 
     printf("\nFrom Client: %s\n\tTo Client: ", buffer);
 
-    int n;
+    bzero(buffer, 80);
+
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
-    send(connectionFD, buffer, sizeof(buffer), 0);
+    send(connectionFD, buffer, strlen(buffer) + 1, 0);
   }
 
   printf("\n\n");

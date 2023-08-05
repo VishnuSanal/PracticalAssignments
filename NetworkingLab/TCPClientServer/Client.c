@@ -36,17 +36,19 @@ int main() {
 
   while (true) {
 
+    int n = 0;
     printf("\nTo Server: ");
 
-    int n;
     while ((buffer[n++] = getchar()) != '\n')
       ;
 
-    send(socketFD, buffer, sizeof(buffer), 0);
+    send(socketFD, buffer, strlen(buffer) + 1, 0);
 
     recv(socketFD, buffer, sizeof(buffer), 0);
 
     printf("\n\tFrom Server : %s", buffer);
+
+    bzero(buffer, 80);
   }
 
   printf("\n\n");
