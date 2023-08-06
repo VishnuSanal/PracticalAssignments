@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main() {
-  int packetSize, outputRate, bucketSize, numberOfPackets, remainingSize = 0;
+  int packetSize, outputRate, bucketSize, numberOfPackets, bucketContents = 0;
 
   printf("\nEnter the Output Rate: ");
   scanf("%d", &outputRate);
@@ -14,23 +14,23 @@ int main() {
 
   for (int i = 0; i < numberOfPackets; i++) {
 
-    printf("Enter the incoming packet size: ");
+    printf("\nEnter the incoming packet size: ");
     scanf("%d", &packetSize);
 
-    if (packetSize <= bucketSize - remainingSize) {
-      remainingSize += packetSize;
+    if (packetSize <= bucketSize - bucketContents)
+      bucketContents += packetSize;
+    else {
 
-      printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
-    } else {
-
-      printf("Dropped %d packets\n", packetSize - bucketSize + remainingSize);
-      remainingSize = bucketSize;
-      printf("Bucket contents: (%d/%d)\n", remainingSize, bucketSize);
+      printf("Dropped %d packets\n",
+             packetSize - (bucketSize - bucketContents));
+      bucketContents = bucketSize;
     }
 
-    remainingSize = remainingSize - outputRate;
+    printf("Bucket contents: (%d/%d)\n", bucketContents, bucketSize);
 
-    printf("After outgoing, Bucket contents: (%d/%d)\n", remainingSize,
+    bucketContents -= outputRate;
+
+    printf("After outgoing, Bucket contents: (%d/%d)\n", bucketContents,
            bucketSize);
   }
 }
