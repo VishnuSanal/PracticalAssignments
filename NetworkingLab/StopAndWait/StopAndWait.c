@@ -3,7 +3,7 @@
 
 int main() {
 
-  int windowSize, sentFrame = 0, acknowledgedFrame, packetCount;
+  int sentFrame = 0, packetCount;
 
   char acknowledgement;
 
@@ -16,22 +16,17 @@ int main() {
 
     printf("Frame %d has been transmitted\n", sentFrame++);
 
-    scanf("%c", &acknowledgement);
-
     while (true) {
 
-      printf("\n");
+      scanf("%c", &acknowledgement); // to prevernt skipping of input
 
-      printf("Is frame %d acknowledged? (Y / N): ", i);
+      printf("\nIs frame %d acknowledged? (Y / N): ", i);
       scanf("%c", &acknowledgement);
 
       if (acknowledgement == 'Y')
         break;
-      else {
+      else
         printf("\nFrame %d retransmitted\n", i);
-
-        scanf("%c", &acknowledgement);
-      }
     }
   }
 
