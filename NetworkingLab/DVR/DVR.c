@@ -29,13 +29,17 @@ int main() {
     for (int i = 0; i < nodes; i++)
       for (int j = 0; j < nodes; j++)
         for (int k = 0; k < nodes; k++)
+
           if (routingTable[i].dist[j] >
               costMatrix[i][k] + routingTable[k].dist[j]) {
+
             routingTable[i].dist[j] =
-                routingTable[i].dist[k] + routingTable[k].dist[j];
+                costMatrix[i][k] + routingTable[k].dist[j];
             routingTable[i].from[j] = k;
+
             count++;
           }
+
   } while (count != 0);
 
   for (int i = 0; i < nodes; i++) {
@@ -55,4 +59,10 @@ int main() {
 2  0 3  7
 99 3 0  11
 1  7 11 0
+*/
+
+/*
+0 1 5
+1 0 2
+5 2 0
 */
