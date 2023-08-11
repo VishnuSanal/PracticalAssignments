@@ -1,41 +1,45 @@
-#include <math.h>
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-struct Frame {
-  char acknowledgement;
-};
+#include <stdbool.h>
 
 int main() {
 
-  int n, r;
+  int wsize, pCount, sentFrame = 0, rtrans;
+  char ack;
 
-  printf("\nEnter the number of frames: ");
-  scanf("%d", &n);
+  printf("Enter window size :");
+  scanf("%d", &wsize);
+  printf("Enter packet count :");
+  scanf("%d", &pCount);
 
-  struct Frame frames[n];
+  for (int i = 0; i < pCount; i++) {
+    printf("\n");
+    for (int j = 0; j < wsize; j++) {
+      printf("Frame %d has been transmitted\n", sentFrame++);
 
-  for (int i = 0; i < n; i++) {
+      if (sentFrame == pCount)
+        break;
+    }
 
-    sleep(rand() % 2);
+    while (true) {
+      scanf("%c", &ack);
+      printf("\nIs there any packet lost during transmission? : ");
+      scanf("%c", &ack);
 
-    printf("\nPackets %d sent successfully", i);
+      if (ack == 'y' || ack == 'Y') {
 
-    frames[i].acknowledgement = 'y';
+        printf("\nEnter losted packetNo : ");
+        scanf("%d", &rtrans);
+        printf("Frame %d has been retransmitted\n", rtrans);
+      }
+      else{
+        break;
+      }
+    }
+    if(sentFrame >= pCount){
+      break;
+    }
   }
-
-  printf("\n\nEnter the frame whose acknowledgement was not received: ");
-  scanf("%d", &r);
-
-  frames[r].acknowledgement = 'n';
-
-  printf("\nResending packet %d", r);
-
-  sleep(rand() % 3);
-
-  frames[r].acknowledgement = 'y';
-
-  printf("\n\nPacket %d received successfully\n", r);
+  
+  printf("Transmission completed...");
+  return 0;
 }
