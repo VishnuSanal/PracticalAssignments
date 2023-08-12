@@ -1,45 +1,51 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 int main() {
 
-  int wsize, pCount, sentFrame = 0, rtrans;
-  char ack;
+  int windowSize, packetCount, sentFrame = 0, failedFrame;
+  char acknowledgment;
 
-  printf("Enter window size :");
-  scanf("%d", &wsize);
-  printf("Enter packet count :");
-  scanf("%d", &pCount);
+  printf("Enter window size: ");
+  scanf("%d", &windowSize);
 
-  for (int i = 0; i < pCount; i++) {
-    printf("\n");
-    for (int j = 0; j < wsize; j++) {
-      printf("Frame %d has been transmitted\n", sentFrame++);
+  printf("Enter packet count: ");
+  scanf("%d", &packetCount);
 
-      if (sentFrame == pCount)
+  for (int i = 0; i < packetCount; i++) {
+
+    for (int j = 0; j < windowSize; j++) {
+      printf("\nFrame %d has been transmitted", sentFrame++);
+
+      if (sentFrame == packetCount)
         break;
     }
 
-    while (true) {
-      scanf("%c", &ack);
-      printf("\nIs there any packet lost during transmission?(y/n) : ");
-      scanf("%c", &ack);
+    scanf("%c", &acknowledgment);
+    printf("\n\nAny packets lost during transmission? (Y/N): ");
+    scanf("%c", &acknowledgment);
 
-      if (ack == 'y') {
+    while (acknowledgment != 'N') {
 
-        printf("\nEnter losted packetNo : ");
-        scanf("%d", &rtrans);
-        printf("Frame %d has been retransmitted\n", rtrans);
+      printf("\nEnter serial number of lost packet: ");
+      scanf("%d", &failedFrame);
+
+      if (failedFrame >= sentFrame) {
+        printf("Invalid serial number");
+        continue;
       }
-      else{
-        break;
-      }
+
+      printf("Frame %d has been retransmitted", failedFrame);
+
+      scanf("%c", &acknowledgment);
+      printf("\n\nAnymore packets lost during transmission? (Y/N): ");
+      scanf("%c", &acknowledgment);
     }
-    if(sentFrame >= pCount){
+
+    if (sentFrame >= packetCount)
       break;
-    }
   }
-  
-  printf("Transmission completed...");
+
+  printf("\nTransmission complete.\n\n");
   return 0;
 }
