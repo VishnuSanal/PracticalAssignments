@@ -22,10 +22,10 @@ int main() {
 
     while (true) {
       scanf("%c", &ack);
-      printf("\nIs there any packet lost during transmission? : ");
+      printf("\nIs there any packet lost during transmission?(y/n) : ");
       scanf("%c", &ack);
 
-      if (ack == 'y' || ack == 'Y') {
+      if (ack == 'y') {
 
         printf("\nEnter losted packetNo : ");
         scanf("%d", &rtrans);
