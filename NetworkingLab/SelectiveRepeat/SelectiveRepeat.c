@@ -1,41 +1,51 @@
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-struct Frame {
-  char acknowledgement;
-};
 
 int main() {
 
-  int n, r;
+  int windowSize, packetCount, sentFrame = 0, failedFrame;
+  char acknowledgment;
 
-  printf("\nEnter the number of frames: ");
-  scanf("%d", &n);
+  printf("Enter window size: ");
+  scanf("%d", &windowSize);
 
-  struct Frame frames[n];
+  printf("Enter packet count: ");
+  scanf("%d", &packetCount);
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < packetCount; i++) {
 
-    sleep(rand() % 2);
+    for (int j = 0; j < windowSize; j++) {
+      printf("\nFrame %d has been transmitted", sentFrame++);
 
-    printf("\nPackets %d sent successfully", i);
+      if (sentFrame == packetCount)
+        break;
+    }
 
-    frames[i].acknowledgement = 'y';
+    scanf("%c", &acknowledgment);
+    printf("\n\nAny packets lost during transmission? (Y/N): ");
+    scanf("%c", &acknowledgment);
+
+    while (acknowledgment != 'N') {
+
+      printf("\nEnter serial number of lost packet: ");
+      scanf("%d", &failedFrame);
+
+      if (failedFrame >= sentFrame) {
+        printf("Invalid serial number");
+        continue;
+      }
+
+      printf("Frame %d has been retransmitted", failedFrame);
+
+      scanf("%c", &acknowledgment);
+      printf("\n\nAnymore packets lost during transmission? (Y/N): ");
+      scanf("%c", &acknowledgment);
+    }
+
+    if (sentFrame >= packetCount)
+      break;
   }
 
-  printf("\n\nEnter the frame whose acknowledgement was not received: ");
-  scanf("%d", &r);
-
-  frames[r].acknowledgement = 'n';
-
-  printf("\nResending packet %d", r);
-
-  sleep(rand() % 3);
-
-  frames[r].acknowledgement = 'y';
-
-  printf("\n\nPacket %d received successfully\n", r);
+  printf("\nTransmission complete.\n\n");
+  return 0;
 }
