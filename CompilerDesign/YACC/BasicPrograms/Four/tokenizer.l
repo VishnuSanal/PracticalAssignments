@@ -4,8 +4,9 @@
 
 %%
 
-[aA|a]	{ return A; }
-[bB|b]	{ return B; }
+a	{ return A; }
+b	{ return B; }
+c	{ return C; }
 \n	{ return NL; }
 .	{ return yytext[0]; }
 

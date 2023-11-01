@@ -1,0 +1,5 @@
+1: (a|b)*abb
+2: a*b*
+3: a^n b^n
+4: a^n b^(n+m) c^m
+5: a^n b^m c^m d^n
