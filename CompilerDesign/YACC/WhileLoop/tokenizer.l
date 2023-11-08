@@ -7,13 +7,12 @@ digit	[0-9]
 
 %%
 
-for						{ return FOR; }
-int						{ return INT; }
+while						{ return WHILE; }
+true|false					{ return BOOL; }
+"||"|"&&"					{ return LOG_OP; }
 ({letter}|(_))({letter}|{digit}|(_))*		{ return ID; }
 (("+"|"-")?)({digit}+)				{ return NUM; }
-= 						{ return EQUALS; }
 "<"|"<="|">"|">="|"=="|"!="			{ return REL_OP; }
-"++"|"--"					{ return INC_DEC; }
 "("						{ return PAR_OPEN; }
 ")"						{ return PAR_CLOSE; }
 ,						{ return COMMA; }

@@ -7,15 +7,13 @@ digit	[0-9]
 
 %%
 
-for						{ return FOR; }
-int						{ return INT; }
+int|float|bool|char				{ return D_TYPE; }
+void						{ return VOID; }
 ({letter}|(_))({letter}|{digit}|(_))*		{ return ID; }
-(("+"|"-")?)({digit}+)				{ return NUM; }
-= 						{ return EQUALS; }
-"<"|"<="|">"|">="|"=="|"!="			{ return REL_OP; }
-"++"|"--"					{ return INC_DEC; }
+
 "("						{ return PAR_OPEN; }
 ")"						{ return PAR_CLOSE; }
+
 ,						{ return COMMA; }
 ;						{ return SEMICOLON; }
 
