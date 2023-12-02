@@ -20,3 +20,7 @@
 - **18:** YACC program to check syntax of Function Declaration in C
 - **19:** YACC program to implement Calculator
 - **20:** YACC program for Infix to Postfix Conversion
+
+Others:
+
+- YACC program to check syntax of while loop declaration in C
