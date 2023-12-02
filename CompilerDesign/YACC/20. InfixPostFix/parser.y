@@ -19,7 +19,8 @@ T : T'*'F	{ printf("*"); }
   | T'/'F	{ printf("/"); }
   | F		{ }
   ;
-F : ID		{ printf("%c", yylval); }
+F : ID		{ printf("%c", yylval); }	
+  | '('E')'	{ }	
   ;
 
 %%
