@@ -59,6 +59,7 @@ int calculate(int one, int two, char op) {
 	
 }
 
+bool isOperator(char c) { return c == '+' || c == '-' || c == '*' || c == '/';}
 
 void push(int i) { STACK[++TOP] = i; }
 
