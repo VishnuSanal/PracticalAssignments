@@ -8,6 +8,7 @@ digit	[0-9]
 %%
 
 {digit}+		{ yylval=atoi(yytext); return DIGIT; }
+" "			{ ; }
 \n			{ return NL; }
 .			{ return yytext[0]; }
 
