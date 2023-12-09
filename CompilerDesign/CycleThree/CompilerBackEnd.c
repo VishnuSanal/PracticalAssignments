@@ -4,6 +4,11 @@
 int main() {
   FILE *file = fopen("input.txt", "r+");
 
+  if (!file) {
+    printf("File Not Found!\n");
+    return 1;
+  }
+
   char target[3], operator[2], operandOne[2], operandTwo[2], equals[2];
 
   while (fscanf(file, "%s %s %s %s %s", target, equals, operandOne, operator,
