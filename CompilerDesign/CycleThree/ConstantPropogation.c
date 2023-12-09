@@ -60,7 +60,7 @@ int main() {
   printf("\nNumber of expressions: ");
   scanf("%d", &numberOfExpressions);
 
-  printf("\nEnter the input:\n\n");
+  printf("\nEnter the input (quadruples):\n\n");
   for (int i = 0; i < numberOfExpressions; i++) {
     scanf("%s %s %s %s", expressions[i].operator, expressions[i].operandOne,
           expressions[i].operandTwo, expressions[i].result);

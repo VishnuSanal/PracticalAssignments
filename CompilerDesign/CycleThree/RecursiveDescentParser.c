@@ -1,5 +1,3 @@
-// Operator Precedence Grammar for Simple Desk Calculator
-
 // E ->  TE'
 // T  -> FT'
 // E' -> +TE' | -TE' | epsilon
@@ -23,7 +21,7 @@ void F();
 
 int main() {
 
-  printf("\n-Operator Precedence Grammar for Simple Desk Calculator-\n");
+  printf("\n-Recursive Precedence Parser for Simple Desk Calculator-\n");
 
   printf("\nEnter an arithmetic expression: ");
   scanf("%s", expression);

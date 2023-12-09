@@ -200,23 +200,23 @@ void getFinalStates(char *newFinalStates, char *oldFinalStates,
 
 int main() {
 
-  printf("Number of states:");
+  printf("Number of states: ");
   scanf("%d", &numberOfStates);
 
-  printf("Number of symbols:");
+  printf("Number of symbols: ");
   scanf("%d", &numberOfSymbols);
 
   printf("Enter transitions\n");
   char c;
   for (int i = 0; i < numberOfStates; i++) {
     for (int j = 0; j < numberOfSymbols; j++) {
-      printf("State %c upoin input %d:\t", i + 65, j);
+      printf("State %c upon input %d: ", i + 65, j);
       scanf("\n%c", &c);
       inputDFA[i][j] = c;
     }
   }
 
-  printf("Final states (non-seperated):");
+  printf("Final states (non-seperated): ");
   scanf("%s", finalStates);
 
   printTransitionTable(inputDFA, numberOfStates, numberOfSymbols, finalStates);

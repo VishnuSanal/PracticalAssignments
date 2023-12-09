@@ -1,0 +1,4 @@
+W = a + b
+X = W - c
+Y = X / d
+Z = Y + e

@@ -20,10 +20,10 @@ void closure(int i) {
 
 int main() {
 
-  printf("Enter the no of states: ");
+  printf("Number of states: ");
   scanf("%d", &numberOfStates);
 
-  printf("Enter number of transitions: ");
+  printf("Number of transitions: ");
   scanf("%d", &numberOfTransitions);
 
   printf("Enter transition table:\nstate symbol state\n");
