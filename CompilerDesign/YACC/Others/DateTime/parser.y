@@ -1,33 +1,38 @@
+// Valid    : 2021-09-21 12:24:60
+// Invalid  : 2021-23-21 12:24:60
 %{
-#include<stdio.h>
-#include<stdlib.h>
-
-
-
+    #include <stdio.h>
+    #include <stdlib.h>
 %}
 
-%token FOR PARO PARC INT ID EQUALS NUM SEMICOLON RELOP INC_DEC NL
+%token DIGIT HYPHEN SPACE COLON NL
 
-%% 
-stmt : S NL   {printf("valid\n"); exit(0);};
+%%
+ 
+stmt: S NL { printf("Valid\n"); exit(0); };
 
-S : FOR PARO INIT COND ACTION PARC ;
+S : DATE SPACE TIME ;
 
-INIT : INT ID EQUALS NUM SEMICOLON ;
+DATE    : YEAR HYPHEN MONTH HYPHEN DAY ;
+YEAR    : DIGIT ;
+MONTH   : DIGIT { if (yylval > 12) { printf("Invalid Month\n"); exit(0); } } ;
+DAY     : DIGIT { if (yylval > 31) { printf("Invalid Day\n"); exit(0); } } ;
 
-COND : ID RELOP NUM SEMICOLON ;
-
-ACTION : ID INC_DEC ;
+TIME    : HOUR COLON MINUTE COLON SECOND ;
+HOUR    : DIGIT { if (yylval > 23) { printf("Invalid Hour\n"); exit(0); } } ;
+MINUTE  : DIGIT { if (yylval > 60) { printf("Invalid Minute\n"); exit(0); } } ;
+SECOND  : DIGIT { if (yylval > 60) { printf("Invalid Minute\n"); exit(0); } } ;
 
 %%
 
-int yyerror(char *msg){
-printf("\ninvalid string\n");
+int main() {
+    printf("Enter the string: ");
+    yyparse();
 
-exit(0);
+    return 0;
 }
 
-int main(){
-printf("enter for\n");
-yyparse();
+int yyerror(char* c) {
+    printf("Invalid\n");
+    return 1;
 }
