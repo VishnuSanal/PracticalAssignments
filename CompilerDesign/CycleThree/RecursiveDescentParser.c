@@ -1,6 +1,12 @@
+// E -> E + T | E - T | T
+// T -> E * F | E / F | F
+// F -> ( E ) | alnum
+
+// removing left recursion...
+
 // E ->  TE'
-// T  -> FT'
 // E' -> +TE' | -TE' | epsilon
+// T  -> FT'
 // T' -> *FT' | /FT' | epsilon
 // F  -> (E)  | alnum
 
@@ -13,11 +19,7 @@ char expression[10];
 int idx = 0;
 bool error = false;
 
-void E();
-void T();
-void EPrime();
-void TPrime();
-void F();
+void E(), T(), EPrime(), TPrime(), F();
 
 int main() {
 
@@ -82,3 +84,4 @@ void F() {
   } else
     error = true;
 }
+
