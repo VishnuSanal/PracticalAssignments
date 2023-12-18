@@ -13,13 +13,12 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 
-char expression[10];
-int idx = 0;
+char expression[100], *lookahead;
+
 bool error = false;
 
-void E(), T(), EPrime(), TPrime(), F();
+void E(), EPrime(), T(), TPrime(), F();
 
 int main() {
 
@@ -28,60 +27,58 @@ int main() {
   printf("\nEnter an arithmetic expression: ");
   scanf("%s", expression);
 
+  lookahead = expression;
+
   E();
 
-  if (strlen(expression) == idx && !error)
+  if (*lookahead == '\0' && !error)
     printf("String accepted\n");
   else
     printf("String rejected\n");
+
+  return 0;
 }
 
 void E() {
   T();
-
   EPrime();
 }
 
 void EPrime() {
-  if (expression[idx] == '+' || expression[idx] == '-') {
-    idx++;
+  if (*lookahead == '+' || *lookahead == '-') {
+    lookahead++;
 
     T();
-
     EPrime();
   }
 }
 
 void T() {
   F();
-
   TPrime();
 }
 
 void TPrime() {
-  if (expression[idx] == '*' || expression[idx] == '/') {
-    idx++;
+  if (*lookahead == '*' || *lookahead == '/') {
+    lookahead++;
 
     F();
-
     TPrime();
   }
 }
 
 void F() {
-  if (isalnum(expression[idx]))
-    idx++;
-  else if (expression[idx] == '(') {
-    idx++;
+  if (isalnum(*lookahead))
+    lookahead++;
+  else if (*lookahead == '(') {
+    lookahead++;
 
     E();
 
-    if (expression[idx] == ')')
-      idx++;
+    if (*lookahead == ')')
+      lookahead++;
     else
       error = true;
-
   } else
     error = true;
 }
-
