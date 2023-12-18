@@ -2,73 +2,87 @@
 #include <stdio.h>
 #include <string.h>
 
-int numberOfProductions, idx;
+int numberOfProductions, idx = 0;
 
-char production[10][10], result[10];
+char productions[10][10], result[10];
 
 void calculateFirst(char c) {
+
+  // necessary for the case to calculate first whilst calculating follow
   if (!isupper(c))
     result[idx++] = c;
-  for (int k = 0; k < numberOfProductions; k++)
-    if (production[k][0] == c) {
-      if (islower(production[k][2]))
-        result[idx++] = production[k][2];
-      else
-        calculateFirst(production[k][2]);
-    }
+
+  for (int i = 0; i < numberOfProductions; i++) {
+    if (productions[i][0] != c)
+      continue;
+
+    if (islower(productions[i][2]))
+      result[idx++] = productions[i][2];
+    else
+      calculateFirst(productions[i][2]);
+  }
 }
 
 void calculateFollow(char c) {
-  if (production[0][0] == c)
+
+  if (productions[0][0] == c)
     result[idx++] = '$';
 
   for (int i = 0; i < numberOfProductions; i++)
-    for (int j = 2; j < strlen(production[i]); j++)
-      if (production[i][j] == c) {
-        if (production[i][j + 1] != '\0')
-          calculateFirst(production[i][j + 1]);
-        if (production[i][j + 1] == '\0' && c != production[i][0])
-          calculateFollow(production[i][0]);
-      }
+    for (int j = 2; j < strlen(productions[i]); j++) {
+
+      if (productions[i][j] != c)
+        continue;
+
+      if (productions[i][j + 1])
+        calculateFirst(productions[i][j + 1]);
+      else if (productions[i][0] != c)
+        calculateFollow(productions[i][0]);
+    }
 }
 
-void printResult(char *s, char state, char *result, int idx) {
-  printf("%s(%c) = { ", s, state);
-  for (int i = 0; i < idx; i++)
-    printf("%c ", result[i]);
+void print(char *s, char symbol, char *str) {
 
-  printf("}\n");
+  printf("\n%s(%c): ", s, symbol);
+
+  for (int i = 0; str[i]; i++) {
+    printf("%c ", str[i]);
+  }
 }
 
 int main() {
-  printf("Number of productions: ");
+
+  printf("Productions: ");
   scanf("%d", &numberOfProductions);
 
-  printf("\nEnter the productions:\n");
   for (int i = 0; i < numberOfProductions; i++) {
-    scanf("%s", production[i]);
+    scanf("%s", productions[i]);
     getchar();
   }
 
   for (int i = 0; i < numberOfProductions; i++) {
 
-    char state = production[i][0];
-
     idx = 0;
+    strcpy(result, "");
 
-    calculateFirst(state);
+    calculateFirst(productions[i][0]);
 
-    printResult("First", state, result, idx);
-
-    strcpy(result, " ");
-    idx = 0;
-
-    calculateFollow(state);
-
-    printResult("Follow", state, result, idx);
-
-    printf("\n\n");
+    print("First", productions[i][0], result);
   }
+
+  printf("\n\n");
+
+  for (int i = 0; i < numberOfProductions; i++) {
+
+    idx = 0;
+    strcpy(result, "");
+
+    calculateFollow(productions[i][0]);
+
+    print("Follow", productions[i][0], result);
+  }
+
+  printf("\n\n");
 
   return 0;
 }
