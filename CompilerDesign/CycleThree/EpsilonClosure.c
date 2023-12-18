@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-bool inputDFA[10][10], visited[10];
+bool hasEpsilonTransition[10][10], visited[10];
 
 int numberOfStates, numberOfTransitions, stateOne, stateTwo;
 
@@ -10,10 +10,9 @@ char inputSymbol;
 void closure(int i) {
   visited[i] = true;
   for (int j = 0; j < numberOfStates; j++) {
-    if (inputDFA[i][j] && !visited[j]) {
+    if (hasEpsilonTransition[i][j] && !visited[j]) {
       printf(", Q%d ", j);
       closure(j);
-      closure(i);
     }
   }
 }
@@ -31,7 +30,7 @@ int main() {
     scanf("%d %c %d", &stateOne, &inputSymbol, &stateTwo);
     
     if (inputSymbol == 'e')
-      inputDFA[stateOne][stateTwo] = true;
+      hasEpsilonTransition[stateOne][stateTwo] = true;
   }
 
   printf("\nEpsilon Closures:\n");
