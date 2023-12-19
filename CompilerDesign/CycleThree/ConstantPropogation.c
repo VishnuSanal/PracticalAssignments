@@ -6,51 +6,57 @@
 
 struct Expression {
   char operator[2], operandOne[5], operandTwo[5], result[5];
-  bool flag;
+  bool isRemoved;
 } expressions[10];
 
 int numberOfExpressions;
 
-void copyValues(int l, char *result) {
-  for (int i = l + 1; i < numberOfExpressions; i++) {
-    if (strcmp(expressions[l].result, expressions[i].operandOne) == 0)
-      strcpy(expressions[i].operandOne, result);
-    if (strcmp(expressions[l].result, expressions[i].operandTwo) == 0)
-      strcpy(expressions[i].operandTwo, result);
+void propogateConstants(int current, int result) {
+  char resultCopy[5];
+
+  sprintf(resultCopy, "%d", result);
+
+  for (int i = current + 1; i < numberOfExpressions; i++) {
+    if (strcmp(expressions[current].result, expressions[i].operandOne) == 0)
+      strcpy(expressions[i].operandOne, resultCopy);
+    if (strcmp(expressions[current].result, expressions[i].operandTwo) == 0)
+      strcpy(expressions[i].operandTwo, resultCopy);
   }
 }
 
-void constant() {
-  int res;
-  char res1[5];
+void scanQuadruples() {
+  int result;
 
   for (int i = 0; i < numberOfExpressions; i++) {
     if (isdigit(expressions[i].operandOne[0]) &&
             isdigit(expressions[i].operandTwo[0]) ||
         strcmp(expressions[i].operator, "=") == 0) {
+
       int operandOne = atoi(expressions[i].operandOne);
       int operandTwo = atoi(expressions[i].operandTwo);
+
       char operator= expressions[i].operator[0];
+
       switch (operator) {
       case '+':
-        res = operandOne + operandTwo;
+        result = operandOne + operandTwo;
         break;
       case '-':
-        res = operandOne - operandTwo;
+        result = operandOne - operandTwo;
         break;
       case '*':
-        res = operandOne * operandTwo;
+        result = operandOne * operandTwo;
         break;
       case '/':
-        res = operandOne / operandTwo;
+        result = operandOne / operandTwo;
         break;
       case '=':
-        res = operandOne;
+        result = operandOne;
         break;
       }
-      sprintf(res1, "%d", res);
-      expressions[i].flag = true;
-      copyValues(i, res1);
+
+      expressions[i].isRemoved = true;
+      propogateConstants(i, result);
     }
   }
 }
@@ -64,18 +70,17 @@ int main() {
   for (int i = 0; i < numberOfExpressions; i++) {
     scanf("%s %s %s %s", expressions[i].operator, expressions[i].operandOne,
           expressions[i].operandTwo, expressions[i].result);
-    expressions[i].flag = false;
+    expressions[i].isRemoved = false;
   }
 
-  constant();
+  scanQuadruples();
 
   printf("\nOptimized Code:\n");
   for (int i = 0; i < numberOfExpressions; i++) {
-    if (!expressions[i].flag) {
+    if (!expressions[i].isRemoved)
       printf("\n%s %s %s %s", expressions[i].operator,
              expressions[i].operandOne, expressions[i].operandTwo,
              expressions[i].result);
-    }
   }
 
   printf("\n\n");
