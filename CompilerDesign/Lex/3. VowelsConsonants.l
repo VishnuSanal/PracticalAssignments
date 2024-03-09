@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include<string.h>
 
-int vowelCount = 0, consonantCount = 0, sentenceCount = 0;
+int vowelCount = 0, consonantCount = 0;
 
 %}
   
