@@ -2,27 +2,28 @@ package assignment_one_db;
 
 import java.sql.*;
 
-public class OracleRepository {
+public class MariaDBConnection {
 
     static void printStudentList() throws SQLException, ClassNotFoundException {
 
-        String url = "jdbc:oracle:thin:@localhost:1521:xe";
+        String url = "jdbc:mariadb://localhost/test";
 
-        String username = "vishnu";
-        String password = "password";
+        String username = "root";
+        String password = "root";
 
-        Class.forName("oracle.jdbc.driver.OracleDriver");
+        Class.forName("org.mariadb.jdbc.Driver");
 
         Connection connection = DriverManager.getConnection(url, username, password);
 
-        String query = "select * from student";
+        String query = "SELECT * FROM STUDENTS";
 
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
         resultSet.next();
 
-        while (resultSet.next())
-            System.out.println("Name: " + resultSet.getString("name"));
+        while (resultSet.next()) {
+            System.out.println(resultSet.getString("ID") + " : " + resultSet.getString("NAME"));
+        }
 
         statement.close();
         connection.close();
