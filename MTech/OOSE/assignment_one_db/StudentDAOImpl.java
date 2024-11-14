@@ -2,19 +2,17 @@ package assignment_one_db;
 
 import java.sql.*;
 
-public class SQLConnection {
+public class StudentDAOImpl implements StudentDAO {
 
-    static void printStudentList() throws SQLException, ClassNotFoundException {
+    private Connection connection = null;
 
-        String url = "jdbc:mysql://localhost:3306/test";
+    public StudentDAOImpl() throws SQLException, ClassNotFoundException {
+        connection = MariaDBConnection.getConnection();
+//        connection = MySQLDBConnection.getConnection();
+    }
 
-        String username = "root";
-        String password = "root";
-
-        Class.forName("org.mariadb.jdbc.Driver");
-
-        Connection connection = DriverManager.getConnection(url, username, password);
-
+    @Override
+    public void fetchStudentList() throws SQLException {
         String query = "SELECT * FROM STUDENTS";
 
         Statement statement = connection.createStatement();
@@ -28,5 +26,4 @@ public class SQLConnection {
         statement.close();
         connection.close();
     }
-
 }
