@@ -8,10 +8,17 @@
 /* This code is distributed under the GPL License. For more info check:  */
 /* http://www.gnu.org/copyleft/gpl.html                                  */
 
+#include <net/if.h>
 #include <pcap.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <sys/fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define ARP_REQUEST 1
 #define ARP_REPLY 2
@@ -31,6 +38,19 @@ typedef struct arphdr {
   u_char targetIPAddr[4];
 } arphdr_t;
 
+void getMacAddress(u_char *result, char *nic) {
+  struct ifreq s;
+  int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+
+  strcpy(s.ifr_name, nic);
+
+  if (0 == ioctl(fd, SIOCGIFHWADDR, &s)) {
+    for (int i = 0; i < 6; ++i) {
+      result[i] = (unsigned char)s.ifr_addr.sa_data[i];
+    }
+  }
+}
+
 int main(int argc, char *argv[]) {
 
   int i = 0;
@@ -49,6 +69,13 @@ int main(int argc, char *argv[]) {
     printf("USAGE: arpsniffer <interface>\n");
     exit(1);
   }
+
+  u_char macAddress[6];
+  getMacAddress(macAddress, argv[1]);
+
+  // printf("\n\n%\n\n", macAddress);
+
+  // return 1;
 
   // Open network device for packet capture
   if ((NIChandler =
@@ -95,6 +122,11 @@ int main(int argc, char *argv[]) {
     printf("Operation: %s\n", (ntohs(ARPHeader->operCode) == ARP_REQUEST)
                                   ? "ARP Request"
                                   : "ARP Reply");
+
+    if (ARPHeader->targetHWAddr == macAddress) {
+      printf("hi");
+      continue;
+    }
 
     // If is Ethernet and IPv4, print packet contents
     if (ntohs(ARPHeader->hType) == 1 && ntohs(ARPHeader->pType) == 0x0800) {
