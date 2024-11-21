@@ -1,0 +1,5 @@
+sudo arping -A -s 192.168.1.6 192.168.1.2 -c 1
+
+ip neigh
+
+# gcc -lpcap
