@@ -8,6 +8,7 @@
 /* This code is distributed under the GPL License. For more info check:  */
 /* http://www.gnu.org/copyleft/gpl.html                                  */
 
+#include <linux/if_link.h>
 #include <net/if.h>
 #include <pcap.h>
 #include <stdbool.h>
@@ -73,10 +74,6 @@ int main(int argc, char *argv[]) {
   u_char macAddress[6];
   getMacAddress(macAddress, argv[1]);
 
-  // printf("\n\n%\n\n", macAddress);
-
-  // return 1;
-
   // Open network device for packet capture
   if ((NIChandler =
            pcap_open_live(argv[1], MAXBYTES2CAPTURE, 0, 512, errBuf)) == NULL) {
@@ -111,8 +108,8 @@ int main(int argc, char *argv[]) {
 
     ARPHeader = (struct arphdr *)(packet + 14); /* Point to the ARP header */
 
-    if ((ntohs(ARPHeader->operCode) == ARP_REQUEST))
-      continue;
+    // if ((ntohs(ARPHeader->operCode) == ARP_REQUEST))
+    //   continue;
 
     printf("\n\nReceived Packet Size: %d bytes\n", packetInfo.len);
     printf("Hardware type: %s\n",
@@ -123,10 +120,50 @@ int main(int argc, char *argv[]) {
                                   ? "ARP Request"
                                   : "ARP Reply");
 
-    if (ARPHeader->targetHWAddr == macAddress) {
-      printf("hi");
+    // strcmp(ARPHeader->targetHWAddr, macAddress)
+
+    bool isSolicitedReply = true; // target mac address = my mac address
+
+    for (i = 0; i < 6; i++) {
+      if (ARPHeader->targetHWAddr[i] != macAddress[i]) {
+        isSolicitedReply = false;
+        break;
+      }
+    }
+
+    if (isSolicitedReply) {
+      printf("\nskipping solicited reply\n");
       continue;
     }
+
+    bool isBroadcast = true; // 00:00:00:00:00:00 and FF:FF:FF:FF:FF:FF
+    for (i = 0; i < 6; i++) {
+      if (ARPHeader->targetHWAddr[i] != 0) {
+        isBroadcast = false;
+        break;
+      }
+    }
+
+    // for (i = 0; i < 6; i++) {
+    //   if (ARPHeader->targetHWAddr[i] != 255) {
+    //     isBroadcast = false;
+    //     break;
+    //   }
+    // }
+
+    printf("\n%b\n", isBroadcast);
+    for (i = 0; i < 6; i++)
+      printf("%02X:", ARPHeader->targetHWAddr[i]);
+
+    if (isBroadcast) {
+      printf("\nskipping router broadcast\n");
+      continue;
+    }
+
+    // if (ARPHeader->targetHWAddr[i] != 255) {
+    //   isSolicitedReply = false;
+    //   break;
+    // }
 
     // If is Ethernet and IPv4, print packet contents
     if (ntohs(ARPHeader->hType) == 1 && ntohs(ARPHeader->pType) == 0x0800) {
@@ -152,6 +189,8 @@ int main(int argc, char *argv[]) {
 
       printf("\n");
     }
+
+    // break;
   }
 
   return 0;
