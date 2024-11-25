@@ -19,6 +19,8 @@
 #include <sys/fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 #define ARP_REQUEST 1
@@ -50,6 +52,22 @@ void getMyMacAddress(u_char *result, char *nic) {
       result[i] = (unsigned char)s.ifr_addr.sa_data[i];
     }
   }
+}
+
+// compares each value of the array to be the specified value
+bool compare_each_value(u_char *one, int count, int val) {
+  for (int i = 0; i < count; i++)
+    if (one[i] != val)
+      return false;
+  return true;
+}
+
+bool compare_u_char_arr(u_char *one, u_char *two, int count) {
+  for (int i = 0; i < count; i++) {
+    if (!one[i] || one[i] != two[i])
+      return false;
+  }
+  return true;
 }
 
 int main(int argc, char *argv[]) {
@@ -116,17 +134,20 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    if (memcmp(ARPHeader->targetHWAddr, "00:00:00:00:00:00", 6) == 0) {
-      printf("\nskipping router broadcast");
+    // 00:00:00:00:00:00
+    if (compare_each_value(ARPHeader->targetHWAddr, 6, 0)) {
+      printf("\nskipping router broadcast (00:00:00:00:00:00)");
       continue;
     }
 
-    if (memcmp(ARPHeader->targetHWAddr, "FF:FF:FF:FF:FF:FF", 6) == 0) {
-      printf("\nskipping router broadcast");
+    // FF:FF:FF:FF:FF:FF
+    if (compare_each_value(ARPHeader->targetHWAddr, 6, 255)) {
+      printf("\nskipping router broadcast (FF:FF:FF:FF:FF:FF)");
       continue;
     }
 
-    printf("\nNew Request: following target MAC to be added to the exclusion list");
+    printf("\nNew Request: following target MAC to be added to the exclusion "
+           "list");
 
     // printf("Received Packet Size: %d bytes", packetInfo.len);
     // printf("\nHardware type: %s",
