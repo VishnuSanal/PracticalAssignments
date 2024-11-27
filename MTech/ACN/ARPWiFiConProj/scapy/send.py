@@ -5,8 +5,11 @@ from scapy.packet import Padding
 import constants
 
 
-def send_request(target_ip, interface="wlo1"):
-    kv_data = {constants.req_key: "True", constants.adm_no_key: "24M186"}
+def send_request(admission_number, interface="wlo1"):
+    # target_ip = "192.168.1.1"
+    target_ip = get_if_addr(iface)
+
+    kv_data = {constants.req_key: "True", constants.adm_no_key: admission_number}
 
     extra_data = "&".join(f"{key}={value}" for key, value in kv_data.items()).encode()
 
@@ -23,9 +26,7 @@ def send_request(target_ip, interface="wlo1"):
 
 
 if __name__ == "__main__":
-    # target_ip = "192.168.1.1"
-
     iface = "wlo1"
-    target = get_if_addr(iface)
+    admn_no = input("Enter your admission number: ")
 
-    send_request(target_ip=target, interface=iface)
+    send_request(admn_no, iface)
