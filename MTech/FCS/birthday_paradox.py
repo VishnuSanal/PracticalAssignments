@@ -17,6 +17,7 @@ def birthday_paradox_probability_simulation(num_people):
     
     return probability
 
+# 1 - ((364/365) ^ nC2)
 def birthday_paradox_probability(num_people):
     number_of_possible_selections = comb(num_people, 2)
     return 1 - pow(364/365, number_of_possible_selections)
@@ -26,7 +27,7 @@ def main():
     indices=[]
     probabilities=[]
 
-    for i in range(2,100):
+    for i in range(2,20):
         indices.append(i)
         
         # probability = birthday_paradox_probability(i)
@@ -34,7 +35,8 @@ def main():
         probabilities.append(probability)
 
     markers_on = [2, 23, 70]
-    plt.plot(indices, probabilities, '-D', markevery=markers_on, label='')
+    # plt.plot(indices, probabilities, '-D', markevery=markers_on, label='')
+    plt.plot(indices, probabilities, '-D', label='')
 
     plt.yticks([x * 0.1 for x in range(0, 10)])
 
@@ -47,4 +49,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
