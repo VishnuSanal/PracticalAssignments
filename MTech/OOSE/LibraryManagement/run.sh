@@ -1,0 +1,1 @@
+mvn install && cp target/Library.war ../apache-tomcat-9.0.97/webapps/Library.war
