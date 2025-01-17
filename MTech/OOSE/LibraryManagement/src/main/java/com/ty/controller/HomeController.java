@@ -23,43 +23,38 @@ public class HomeController {
 
     @RequestMapping(path = "/")
     public String root() {
-        return "hii";
-
+        return "redirect:/welcome";
     }
 
     @RequestMapping(path = "/welcome")
     public String welcome() {
         return "welcome";
-
     }
 
     @RequestMapping(path = "/login")
     public String login() {
         return "login";
-
     }
 
     @RequestMapping(path = "/user")
     public String user(Model model) {
         List<Book> list = bookDao.getAllBook();
         model.addAttribute("bookList", list);
-        return "user";
 
+        return "user";
     }
 
-    @RequestMapping(path = "/home")
-    public String home(Model model) {
+    @RequestMapping(path = "/admin")
+    public String admin(Model model) {
         List<Book> list = bookDao.getAllBook();
         model.addAttribute("bookList", list);
 
-        return "home";
-
+        return "admin";
     }
 
     @RequestMapping(path = "/addBook")
     public String addBook() {
         return "add_book";
-
     }
 
     @RequestMapping(path = "/createBook", method = RequestMethod.POST)
@@ -108,7 +103,7 @@ public class HomeController {
         bookDao.update(book);
         session.setAttribute("msg", "Book Upadted Sucessfully");
 
-        return "redirect:/home";
+        return "redirect:/admin";
     }
 
     @RequestMapping(path = "/deleteBook/{id}")
@@ -117,7 +112,7 @@ public class HomeController {
 
         session.setAttribute("msg", "Book Deleted Sucessfully");
 
-        return "redirect:/home";
+        return "redirect:/admin";
     }
 
     @GetMapping("/register")
@@ -143,9 +138,9 @@ public class HomeController {
         User user = userDAO.login(username, password);
         if (user != null) {
             if ("ADMIN".equals(user.getRole())) {
-                return "admin";
+                return "redirect:/admin";
             } else {
-                return "user";
+                return "redirect:/user";
             }
         }
 

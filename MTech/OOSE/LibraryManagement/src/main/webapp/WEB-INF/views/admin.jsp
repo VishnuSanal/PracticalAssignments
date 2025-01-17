@@ -82,7 +82,7 @@ uri="http://java.sun.com/jsp/jstl/core"%> <%@ page isELIgnored="false"%>
             <li class="nav-item">
               <a
                 class="nav-link text-white fw-bold"
-                href="home"
+                href="admin"
                 style="font-size: 1.1rem"
               >
                 Home
